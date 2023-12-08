@@ -1,3 +1,8 @@
+# other files to ignore
+tfl_to_blog/token.json
+tfl_to_blog/credentials.json
+Campaign report.csv
+
 # audio files
 *.mp3
 *.wav
