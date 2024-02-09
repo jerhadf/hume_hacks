@@ -1,0 +1,350 @@
+{
+    "info": {
+        "title": "Hume AI Assistant API",
+        "version": "0.1.76",
+        "description": "Chat with empathic AI Assistants."
+    },
+    "x-topics": [],
+    "servers": {
+        "prod": {
+            "url": "wss://api.hume.ai/v0/assistant",
+            "protocol": "wss"
+        }
+    },
+    "channels": {
+        "/chat": {
+            "description": "Chat with empathic AI Assistants.",
+            "publish": {
+                "message": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/components/messages/AudioInput"
+                        },
+                        {
+                            "$ref": "#/components/messages/TtsInput"
+                        }
+                    ]
+                }
+            },
+            "subscribe": {
+                "message": {
+                    "oneOf": [
+                        {
+                            "$ref": "#/components/messages/AssistantEnd"
+                        },
+                        {
+                            "$ref": "#/components/messages/AssistantMessage"
+                        },
+                        {
+                            "$ref": "#/components/messages/AudioOutput"
+                        },
+                        {
+                            "$ref": "#/components/messages/Error"
+                        },
+                        {
+                            "$ref": "#/components/messages/UserMessage"
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "components": {
+        "messages": {
+            "AudioInput": {
+                "name": "AudioInput",
+                "payload": {
+                    "$ref": "#/components/schemas/AudioInput"
+                }
+            },
+            "TtsInput": {
+                "name": "TtsInput",
+                "payload": {
+                    "$ref": "#/components/schemas/TtsInput"
+                }
+            },
+            "AssistantEnd": {
+                "name": "AssistantEnd",
+                "payload": {
+                    "$ref": "#/components/schemas/AssistantEnd"
+                }
+            },
+            "AssistantMessage": {
+                "name": "AssistantMessage",
+                "payload": {
+                    "$ref": "#/components/schemas/AssistantMessage"
+                }
+            },
+            "AudioOutput": {
+                "name": "AudioOutput",
+                "payload": {
+                    "$ref": "#/components/schemas/AudioOutput"
+                }
+            },
+            "Error": {
+                "name": "Error",
+                "payload": {
+                    "$ref": "#/components/schemas/Error"
+                }
+            },
+            "UserMessage": {
+                "name": "UserMessage",
+                "payload": {
+                    "$ref": "#/components/schemas/UserMessage"
+                }
+            }
+        },
+        "schemas": {
+            "AudioInput": {
+                "properties": {
+                    "type": {
+                        "const": "audio_input",
+                        "default": "audio_input",
+                        "title": "Type"
+                    },
+                    "data": {
+                        "title": "Data",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "data"
+                ],
+                "title": "AudioInput",
+                "type": "object"
+            },
+            "TtsInput": {
+                "properties": {
+                    "type": {
+                        "const": "tts",
+                        "default": "tts",
+                        "title": "Type"
+                    },
+                    "text": {
+                        "title": "Text",
+                        "type": "string"
+                    },
+                    "sample_id": {
+                        "default": 1,
+                        "title": "Sample Id",
+                        "type": "integer"
+                    },
+                    "speaker": {
+                        "default": "sam",
+                        "title": "Speaker",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "text"
+                ],
+                "title": "TtsInput",
+                "type": "object"
+            },
+            "AssistantEnd": {
+                "properties": {
+                    "type": {
+                        "const": "assistant_end",
+                        "default": "assistant_end",
+                        "title": "Type"
+                    }
+                },
+                "title": "AssistantEnd",
+                "type": "object"
+            },
+            "AssistantMessage": {
+                "properties": {
+                    "type": {
+                        "const": "assistant_message",
+                        "default": "assistant_message",
+                        "title": "Type"
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "message": {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    "models": {
+                        "items": {
+                            "$ref": "#/components/schemas/Inference"
+                        },
+                        "title": "Models",
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "message",
+                    "models"
+                ],
+                "title": "AssistantMessage",
+                "type": "object"
+            },
+            "AudioOutput": {
+                "properties": {
+                    "type": {
+                        "const": "audio_output",
+                        "default": "audio_output",
+                        "title": "Type"
+                    },
+                    "id": {
+                        "title": "Id",
+                        "type": "string"
+                    },
+                    "data": {
+                        "title": "Data",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "data"
+                ],
+                "title": "AudioOutput",
+                "type": "object"
+            },
+            "ChatMessage": {
+                "properties": {
+                    "role": {
+                        "$ref": "#/components/schemas/Role"
+                    },
+                    "content": {
+                        "title": "Content",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "role",
+                    "content"
+                ],
+                "title": "ChatMessage",
+                "type": "object"
+            },
+            "Entry": {
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "type": "string"
+                    },
+                    "score": {
+                        "title": "Score",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "name",
+                    "score"
+                ],
+                "title": "Entry",
+                "type": "object"
+            },
+            "Error": {
+                "properties": {
+                    "type": {
+                        "const": "error",
+                        "default": "error",
+                        "title": "Type"
+                    },
+                    "code": {
+                        "title": "Code",
+                        "type": "string"
+                    },
+                    "slug": {
+                        "title": "Slug",
+                        "type": "string"
+                    },
+                    "message": {
+                        "title": "Message",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "code",
+                    "slug",
+                    "message"
+                ],
+                "title": "Error",
+                "type": "object"
+            },
+            "Inference": {
+                "properties": {
+                    "model": {
+                        "title": "Model",
+                        "type": "string"
+                    },
+                    "entries": {
+                        "items": {
+                            "$ref": "#/components/schemas/Entry"
+                        },
+                        "title": "Entries",
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "model",
+                    "entries"
+                ],
+                "title": "Inference",
+                "type": "object"
+            },
+            "MillisecondInterval": {
+                "properties": {
+                    "begin": {
+                        "title": "Begin",
+                        "type": "integer"
+                    },
+                    "end": {
+                        "title": "End",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "begin",
+                    "end"
+                ],
+                "title": "MillisecondInterval",
+                "type": "object"
+            },
+            "Role": {
+                "enum": [
+                    "assistant",
+                    "system",
+                    "user"
+                ],
+                "title": "Role",
+                "type": "string"
+            },
+            "UserMessage": {
+                "properties": {
+                    "type": {
+                        "const": "user_message",
+                        "default": "user_message",
+                        "title": "Type"
+                    },
+                    "message": {
+                        "$ref": "#/components/schemas/ChatMessage"
+                    },
+                    "models": {
+                        "items": {
+                            "$ref": "#/components/schemas/Inference"
+                        },
+                        "title": "Models",
+                        "type": "array"
+                    },
+                    "time": {
+                        "$ref": "#/components/schemas/MillisecondInterval"
+                    }
+                },
+                "required": [
+                    "message",
+                    "models",
+                    "time"
+                ],
+                "title": "UserMessage",
+                "type": "object"
+            }
+        }
+    },
+    "asyncapi": "2.6.0"
+}
